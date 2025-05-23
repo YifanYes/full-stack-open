@@ -7,13 +7,19 @@ const Statistics = ({ good, neutral, bad }) => {
 
   return (
     <>
-      <h2>statistics</h2>
-      <p>good {good}</p>
-      <p>neutral {neutral}</p>
-      <p>bad {bad}</p>
-      <p>all {good + neutral + bad}</p>
-      <p>average {isGreaterThanZero ? ((good - bad) / (good + neutral + bad)).toFixed(2) : 'no data'}</p>
-      <p>positive {isGreaterThanZero ? Math.round((good / (good + neutral + bad)) * 100, 2) : 'no data'} %</p>
+      {isGreaterThanZero ? (
+        <>
+          <h2>statistics</h2>
+          <p>good {good}</p>
+          <p>neutral {neutral}</p>
+          <p>bad {bad}</p>
+          <p>all {good + neutral + bad}</p>
+          <p>average {isGreaterThanZero ? ((good - bad) / (good + neutral + bad)).toFixed(2) : 'no data'}</p>
+          <p>positive {isGreaterThanZero ? Math.round((good / (good + neutral + bad)) * 100, 2) : 'no data'} %</p>
+        </>
+      ) : (
+        <p>No feedback given</p>
+      )}
     </>
   )
 }
