@@ -3,10 +3,11 @@ import { useState } from 'react'
 const Button = ({ handleClick, text }) => <button onClick={handleClick}>{text}</button>
 
 const App = () => {
-  // save clicks of each button to its own state
   const [good, setGood] = useState(0)
   const [neutral, setNeutral] = useState(0)
   const [bad, setBad] = useState(0)
+
+  const isGreaterThanZero = good + neutral + bad
 
   return (
     <>
@@ -18,6 +19,9 @@ const App = () => {
       <p>good {good}</p>
       <p>neutral {neutral}</p>
       <p>bad {bad}</p>
+      <p>all {good + neutral + bad}</p>
+      <p>average {isGreaterThanZero ? Math.round((good - bad) / (good + neutral + bad), 2) : 'no data'}</p>
+      <p>positive {isGreaterThanZero ? `${Math.round((good / (good + neutral + bad)) * 100, 2)} %` : 'no data'}</p>
     </>
   )
 }
