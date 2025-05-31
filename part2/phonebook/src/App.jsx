@@ -1,16 +1,20 @@
-import { useState } from 'react'
+import axios from 'axios'
+import { useEffect, useState } from 'react'
 import AddPersonForm from './components/AddPersonForm'
 import SearchBar from './components/SearchBar'
 
 const App = () => {
-  const [phonebook, setPhonebook] = useState([
-    { name: 'Arto Hellas', number: '040-123456', id: 1 },
-    { name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
-    { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
-    { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }
-  ])
+  const [phonebook, setPhonebook] = useState([])
   const [newPerson, setNewPerson] = useState({ name: '', number: '' })
   const [searchText, setSearchText] = useState('')
+
+  useEffect(() => {
+    const getPhonebook = async () => {
+      const response = await axios.get('http://localhost:3001/persons')
+      setPhonebook(response.data)
+    }
+    getPhonebook()
+  }, [])
 
   const handleSubmit = (event) => {
     event.preventDefault()
