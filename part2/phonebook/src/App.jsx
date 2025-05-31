@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react'
 import AddPersonForm from './components/AddPersonForm'
 import SearchBar from './components/SearchBar'
+import Toast from './components/Toast'
 import { addNewPerson, deletePerson, getPhonebook, updatePerson } from './services/phonebook.services'
 
 const App = () => {
   const [phonebook, setPhonebook] = useState([])
   const [newPerson, setNewPerson] = useState({ name: '', number: '' })
   const [searchText, setSearchText] = useState('')
+  const [toastData, setToastData] = useState(null)
 
   useEffect(() => {
     const fetchPhonebook = async () => {
@@ -42,8 +44,20 @@ const App = () => {
         const updatedPerson = await updatePerson(newNumberPerson.id, { name, number })
         setPhonebook(phonebook.map((person) => (person.id === updatedPerson.id ? updatedPerson : person)))
         setNewPerson({ name: '', number: '' })
+        setToastData({ message: `${name} updated successfully`, severity: 'success', duration: 3000 })
       } catch (error) {
-        console.error('Failed to update person:', error)
+        console.error(error)
+
+        if (error.status === 404) {
+          setToastData({
+            message: `Information of ${name} has already been removed from server`,
+            severity: 'error',
+            duration: 3000
+          })
+          return
+        }
+
+        setToastData({ message: 'Failed to update person', severity: 'error', duration: 3000 })
       }
 
       return
@@ -53,8 +67,10 @@ const App = () => {
       const storedNewPerson = await addNewPerson(newPerson)
       setPhonebook([...phonebook, storedNewPerson])
       setNewPerson({ name: '', number: '' })
+      setToastData({ message: `${name} added successfully`, severity: 'success', duration: 3000 })
     } catch (error) {
-      console.error('Failed to add new person:', error)
+      console.error(error)
+      setToastData({ message: 'Failed to add new person', severity: 'error', duration: 3000 })
     }
   }
 
@@ -68,14 +84,24 @@ const App = () => {
       try {
         await deletePerson(id)
         setPhonebook(phonebook.filter((person) => person.id !== id))
+        setToastData({ message: `${name} deleted successfully`, severity: 'success', duration: 3000 })
       } catch (error) {
         console.error(error)
+        setToastData({ message: 'Failed to delete person', severity: 'error', duration: 3000 })
       }
     }
   }
 
   return (
     <div>
+      {toastData && (
+        <Toast
+          message={toastData.message}
+          severity={toastData.severity}
+          duration={toastData.duration}
+          setToastData={setToastData}
+        />
+      )}
       <h2>Phonebook</h2>
       <SearchBar searchText={searchText} handleFilterPersons={handleFilterPersons} />
       <h2>add a new</h2>
