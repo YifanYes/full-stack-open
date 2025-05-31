@@ -11,3 +11,12 @@ export const getPhonebook = async () => {
   const response = await axios.get(`${BASE_URL}/persons`)
   return response.data
 }
+
+export const deletePerson = async (id) => {
+  await axios.delete(`${BASE_URL}/persons/${id}`)
+}
+
+export const updatePerson = async (id, data) => {
+  const response = await axios.put(`${BASE_URL}/persons/${id}`, data)
+  return response.data
+}
