@@ -1,24 +1,23 @@
-import axios from 'axios'
 import { useEffect, useState } from 'react'
 import AddPersonForm from './components/AddPersonForm'
 import SearchBar from './components/SearchBar'
+import { addNewPerson, getPhonebook } from './services/phonebook.services'
 
 const App = () => {
   const [phonebook, setPhonebook] = useState([])
   const [newPerson, setNewPerson] = useState({ name: '', number: '' })
   const [searchText, setSearchText] = useState('')
 
-  const addNewPerson = async (newPerson) => {
-    const response = await axios.post('http://localhost:3001/persons', newPerson)
-    return response.data
-  }
-
   useEffect(() => {
-    const getPhonebook = async () => {
-      const response = await axios.get('http://localhost:3001/persons')
-      setPhonebook(response.data)
+    const fetchPhonebook = async () => {
+      try {
+        const phonebook = await getPhonebook()
+        setPhonebook(phonebook)
+      } catch (error) {
+        console.error(error)
+      }
     }
-    getPhonebook()
+    fetchPhonebook()
   }, [])
 
   const handleSubmit = async (event) => {
@@ -29,9 +28,13 @@ const App = () => {
       return
     }
 
-    const storedNewPerson = await addNewPerson(newPerson)
-    setPhonebook(phonebook.concat(storedNewPerson))
-    setNewPerson({ name: '', number: '' })
+    try {
+      const storedNewPerson = await addNewPerson(newPerson)
+      setPhonebook(phonebook.concat(storedNewPerson))
+      setNewPerson({ name: '', number: '' })
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   const handleFilterPersons = (event) => {
