@@ -8,6 +8,11 @@ const App = () => {
   const [newPerson, setNewPerson] = useState({ name: '', number: '' })
   const [searchText, setSearchText] = useState('')
 
+  const addNewPerson = async (newPerson) => {
+    const response = await axios.post('http://localhost:3001/persons', newPerson)
+    return response.data
+  }
+
   useEffect(() => {
     const getPhonebook = async () => {
       const response = await axios.get('http://localhost:3001/persons')
@@ -16,7 +21,7 @@ const App = () => {
     getPhonebook()
   }, [])
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault()
 
     if (phonebook.some((person) => person.name === newPerson.name && person.number === newPerson.number)) {
@@ -24,7 +29,8 @@ const App = () => {
       return
     }
 
-    setPhonebook(phonebook.concat(newPerson))
+    const storedNewPerson = await addNewPerson(newPerson)
+    setPhonebook(phonebook.concat(storedNewPerson))
     setNewPerson({ name: '', number: '' })
   }
 
