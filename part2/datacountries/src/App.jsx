@@ -9,6 +9,7 @@ function App() {
   const [searchText, setSearchText] = useState('')
   const [countries, setCountries] = useState([])
   const [filteredCountries, setFilteredCountries] = useState([])
+  const [selectedCountry, setSelectedCountry] = useState(null)
 
   useEffect(() => {
     const fetchCountries = async () => {
@@ -21,7 +22,6 @@ function App() {
   const handleFindCountries = async (event) => {
     setSearchText(event.target.value)
     const result = countries.filter((country) => country.name.common.toLowerCase().includes(searchText.toLowerCase()))
-    console.log(result)
     setFilteredCountries(result ?? [])
   }
 
@@ -29,9 +29,17 @@ function App() {
     <>
       <SearchBar searchText={searchText} handleFindCountries={handleFindCountries} />
       {filteredCountries.length > 10 && <p>Too many matches, specify another filter</p>}
-      {filteredCountries.length > 1 &&
-        filteredCountries.length <= 10 &&
-        filteredCountries.map((country) => <p key={country.cca3}>{country.name.common}</p>)}
+      {filteredCountries.length > 1 && filteredCountries.length <= 10 && (
+        <>
+          {filteredCountries.map((country) => (
+            <div key={country.cca3}>
+              <span>{country.name.common}</span>
+              <button onClick={() => setSelectedCountry(country)}>show</button>
+            </div>
+          ))}
+          {selectedCountry && <Country country={selectedCountry} />}
+        </>
+      )}
       {filteredCountries.length === 1 && <Country country={filteredCountries[0]} />}
     </>
   )
