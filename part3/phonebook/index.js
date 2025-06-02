@@ -27,6 +27,10 @@ const phonebook = [
   }
 ]
 
+app.get('/info', (_req, res) => {
+  res.status(200).send(`Phonebook has info for ${phonebook.length} people <br/> ${new Date()}`)
+})
+
 app.get('/api/persons', (_req, res) => {
   res.status(200).json(phonebook)
 })
