@@ -4,7 +4,7 @@ const app = express()
 
 app.use(express.json())
 
-const phonebook = [
+let phonebook = [
   {
     id: '1',
     name: 'Arto Hellas',
@@ -43,6 +43,18 @@ app.get('/api/persons/:id', (req, res) => {
   }
 
   return res.status(200).json(person)
+})
+
+app.delete('/api/persons/:id', (req, res) => {
+  const personId = req.params.id
+  const person = phonebook.find((person) => person.id === personId)
+  if (!person) {
+    return res.status(404).end()
+  }
+
+  phonebook = phonebook.filter((person) => person.id !== personId)
+
+  return res.status(204).end()
 })
 
 const PORT = 3001
