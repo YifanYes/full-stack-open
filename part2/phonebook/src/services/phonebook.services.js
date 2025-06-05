@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const BASE_URL = 'http://localhost:3001/api'
+const BASE_URL = '/api'
 
 export const addNewPerson = async (newPerson) => {
   const response = await axios.post(`${BASE_URL}/persons`, newPerson)
