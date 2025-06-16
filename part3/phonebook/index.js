@@ -3,6 +3,7 @@ import cors from 'cors'
 import express from 'express'
 import morgan from 'morgan'
 import { Person } from './models/person.js'
+import { errorHandler } from './middlewares/errorHandler.js'
 
 const PORT = process.env.PORT || 3001
 
@@ -37,14 +38,13 @@ app.get('/api/persons/:id', (req, res) => {
   return res.status(200).json(person)
 })
 
-app.delete('/api/persons/:id', (req, res) => {
+app.delete('/api/persons/:id', async (req, res) => {
   const personId = req.params.id
-  const person = phonebook.find((person) => person.id === personId)
-  if (!person) {
-    return res.status(404).end()
-  }
 
-  phonebook = phonebook.filter((person) => person.id !== personId)
+  const result = await Person.findByIdAndDelete(personId)
+  if (!result) {
+    return res.status(404).json({ message: 'Person not found' })
+  }
 
   return res.status(204).end()
 })
@@ -67,6 +67,8 @@ app.post('/api/persons', async (req, res) => {
 
   return res.status(200).json(savedPerson)
 })
+
+app.use(errorHandler)
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
