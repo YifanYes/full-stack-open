@@ -18,54 +18,100 @@ morgan.token('body', (req) => {
 })
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
-app.get('/info', async (_req, res) => {
-  const people = await Person.find({})
-  return res.status(200).send(`Phonebook has info for ${people.length} people <br/> ${new Date()}`)
+app.get('/info', async (_req, res, next) => {
+  try {
+    const people = await Person.find({})
+    return res.status(200).send(`Phonebook has info for ${people.length} people <br/> ${new Date()}`)
+  } catch (error) {
+    next(error)
+  }
 })
 
-app.get('/api/persons', async (_req, res) => {
-  const people = await Person.find({})
-  return res.status(200).json(people)
+app.get('/api/persons', async (_req, res, next) => {
+  try {
+    const people = await Person.find({})
+    return res.status(200).json(people)
+  } catch (error) {
+    next(error)
+  }
 })
 
-app.get('/api/persons/:id', (req, res) => {
-  const personId = req.params.id
-  const person = phonebook.find((person) => person.id === personId)
-  if (!person) {
-    return res.status(404).end()
-  }
+app.get('/api/persons/:id', async (req, res, next) => {
+  try {
+    const personId = req.params.id
+    const person = await Person.findById(personId)
+    if (!person) {
+      return res.status(404).end()
+    }
 
-  return res.status(200).json(person)
+    return res.status(200).json(person)
+  } catch (error) {
+    next(error)
+  }
 })
 
-app.delete('/api/persons/:id', async (req, res) => {
-  const personId = req.params.id
+app.delete('/api/persons/:id', async (req, res, next) => {
+  try {
+    const personId = req.params.id
 
-  const result = await Person.findByIdAndDelete(personId)
-  if (!result) {
-    return res.status(404).json({ message: 'Person not found' })
+    const result = await Person.findByIdAndDelete(personId)
+    if (!result) {
+      return res.status(404).json({ message: 'Person not found' })
+    }
+
+    return res.status(204).end()
+  } catch (error) {
+    next(error)
   }
-
-  return res.status(204).end()
 })
 
-app.post('/api/persons', async (req, res) => {
-  const { name, number } = req.body
-  if (!name) {
-    return res.status(400).json({ error: 'Name is required' })
+app.post('/api/persons', async (req, res, next) => {
+  try {
+    const { name, number } = req.body
+    if (!name) {
+      return res.status(400).json({ error: 'Name is required' })
+    }
+    if (!number) {
+      return res.status(400).json({ error: 'Number is required' })
+    }
+
+    const newPerson = new Person({
+      name,
+      number
+    })
+
+    const savedPerson = await newPerson.save()
+
+    return res.status(200).json(savedPerson)
+  } catch (error) {
+    next(error)
   }
-  if (!number) {
-    return res.status(400).json({ error: 'Number is required' })
+})
+
+app.put('/api/persons/:id', async (req, res, next) => {
+  try {
+    const personId = req.params.id
+    const { name, number } = req.body
+    if (!name) {
+      return res.status(400).json({ error: 'Name is required' })
+    }
+    if (!number) {
+      return res.status(400).json({ error: 'Number is required' })
+    }
+
+    const person = await Person.findById(personId)
+    if (!person) {
+      return res.status(404).json({ message: 'Person not found' })
+    }
+
+    person.name = name
+    person.number = number
+    const updatedPerson = await person.save()
+
+    return res.status(200).json(updatedPerson)
+  } catch (error) {
+    next(error)
   }
-
-  const newPerson = new Person({
-    name,
-    number
-  })
-
-  const savedPerson = await newPerson.save()
-
-  return res.status(200).json(savedPerson)
 })
 
 app.use(errorHandler)
