@@ -101,7 +101,7 @@ app.put('/api/persons/:id', async (req, res, next) => {
 
     const person = await Person.findById(personId)
     if (!person) {
-      return res.status(404).json({ message: 'Person not found' })
+      return res.status(404).json({ error: 'Person not found' })
     }
 
     person.name = name

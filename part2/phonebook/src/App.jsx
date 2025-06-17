@@ -57,6 +57,15 @@ const App = () => {
           return
         }
 
+        if (error.status === 400) {
+          setToastData({
+            message: error.response.data.error || 'Failed to update person',
+            severity: 'error',
+            duration: 3000
+          })
+          return
+        }
+
         setToastData({ message: 'Failed to update person', severity: 'error', duration: 3000 })
       }
 
@@ -70,6 +79,16 @@ const App = () => {
       setToastData({ message: `${name} added successfully`, severity: 'success', duration: 3000 })
     } catch (error) {
       console.error(error)
+
+      if (error.status === 400) {
+        setToastData({
+          message: error.response.data.error || 'Failed to add new person',
+          severity: 'error',
+          duration: 3000
+        })
+        return
+      }
+
       setToastData({ message: 'Failed to add new person', severity: 'error', duration: 3000 })
     }
   }
