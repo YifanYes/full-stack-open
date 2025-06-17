@@ -14,7 +14,7 @@ const personSchema = new mongoose.Schema({
       validator: function (v) {
         return /^\d{2,3}-\d{5,}$/.test(v)
       },
-      message: (props) => `Invalid phone number. It should be 2-3 digits followed by a dash and 5-6 digits.`
+      message: () => 'Invalid phone number. It should be 2-3 digits followed by a dash and 5-6 digits.'
     }
   }
 })
