@@ -18,3 +18,13 @@ export const mostBlogs = (blogs) => {
     blogs: counts[topAuthor]
   }
 }
+
+export const mostLikes = (blogs) => {
+  const grouped = _.groupBy(blogs, 'author')
+  const likesByAuthor = _.map(grouped, (posts, author) => ({
+    author,
+    likes: _.sumBy(posts, 'likes')
+  }))
+
+  return _.maxBy(likesByAuthor, 'likes')
+}

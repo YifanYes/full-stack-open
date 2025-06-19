@@ -1,6 +1,6 @@
 import { test, describe } from 'node:test'
 import assert from 'node:assert'
-import { dummy, favoriteBlog, mostBlogs, totalLikes } from '../utils/list_helper.js'
+import { dummy, favoriteBlog, mostBlogs, mostLikes, totalLikes } from '../utils/list_helper.js'
 
 const emptyBlogs = []
 
@@ -121,5 +121,22 @@ describe('most blogs', () => {
   test('of a bigger list is calculated right', () => {
     const result = mostBlogs(listWithLotsOfBlogs)
     assert.deepStrictEqual(result, { author: 'Robert C. Martin', blogs: 3 })
+  })
+})
+
+describe('most likes', () => {
+  test('of empty list is zero', () => {
+    const result = totalLikes(emptyBlogs)
+    assert.strictEqual(result, 0)
+  })
+
+  test('of list with one blog is that blog', () => {
+    const result = mostLikes(listWithOneBlog)
+    assert.deepStrictEqual(result, { author: 'Edsger W. Dijkstra', likes: 5 })
+  })
+
+  test('of a bigger list is calculated right', () => {
+    const result = mostLikes(listWithLotsOfBlogs)
+    assert.deepStrictEqual(result, { author: 'Edsger W. Dijkstra', likes: 17 })
   })
 })
